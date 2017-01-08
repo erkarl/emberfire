@@ -191,7 +191,7 @@ export default DS.Adapter.extend(Waitable, {
       record.__listening = true;
       var ref = this._getCollectionRef(typeClass, record.id);
       var called = false;
-      ref.on('value', (snapshot) => {
+      ref.once('value', (snapshot) => {
         if (called) {
           Ember.run(() => {
             this._handleChildValue(store, typeClass, snapshot);
