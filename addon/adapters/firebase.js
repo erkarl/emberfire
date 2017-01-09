@@ -10,8 +10,6 @@ import includes from 'lodash/collection/includes';
 import indexOf from 'lodash/array/indexOf';
 import find from 'lodash/collection/find';
 
-console.log('linked emberfire');
-
 var Promise = Ember.RSVP.Promise;
 
 var uniq = function (arr) {
@@ -232,11 +230,11 @@ export default DS.Adapter.extend(Waitable, {
    * store.
    */
   findAll(store, typeClass) {
-    console.log('FINDALL MKAY');
-    if (FastBoot) {
-      console.log('dealing with fastboot mfer');
+    console.log('findAll');
+    if (typeof FastBoot !== 'undefined' && FastBoot) {
+      console.log('FastBoot exists!');
     } else {
-      console.log('not fastboot');
+      console.log('Not Fastboot!');
     }
     var ref = this._getCollectionRef(typeClass);
 
