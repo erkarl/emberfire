@@ -10,6 +10,8 @@ import includes from 'lodash/collection/includes';
 import indexOf from 'lodash/array/indexOf';
 import find from 'lodash/collection/find';
 
+console.log('linked emberfire');
+
 var Promise = Ember.RSVP.Promise;
 
 var uniq = function (arr) {
@@ -145,10 +147,14 @@ export default DS.Adapter.extend(Waitable, {
 
       ref.once('value', (snapshot) => {
         this._decrementWaiters();
+        // Clear up ref listeners for fastboot
+        ref.off('value');
         Ember.run(null, resolve, snapshot);
 
       }, (err) => {
         this._decrementWaiters();
+        // Clear up ref listeners for fastboot
+        ref.off('value');
         Ember.run(null, reject, err);
       });
 
@@ -197,6 +203,8 @@ export default DS.Adapter.extend(Waitable, {
             this._handleChildValue(store, typeClass, snapshot);
           });
         }
+        // Clear value listener for Fastboot
+        ref.off('value');
         called = true;
       }, (error) => {
         Ember.Logger.error(error);
@@ -224,6 +232,12 @@ export default DS.Adapter.extend(Waitable, {
    * store.
    */
   findAll(store, typeClass) {
+    console.log('FINDALL MKAY');
+    if (FastBoot) {
+      console.log('dealing with fastboot mfer');
+    } else {
+      console.log('not fastboot');
+    }
     var ref = this._getCollectionRef(typeClass);
 
     var log = `DS: FirebaseAdapter#findAll ${typeClass.modelName} to ${ref.toString()}`;
@@ -245,6 +259,7 @@ export default DS.Adapter.extend(Waitable, {
 
 
   query(store, typeClass, query, recordArray) {
+    console.log('Store query used - should not be happening');
     var ref = this._getCollectionRef(typeClass);
     var modelName = typeClass.modelName;
 
@@ -350,11 +365,13 @@ export default DS.Adapter.extend(Waitable, {
     var modelName = typeClass.modelName;
     this._findAllMapForType[modelName] = true;
 
+    /* Disable findAll event listeners for FastBoot
     ref.on('child_added', Ember.run.bind(this, function (snapshot) {
       if (!store.hasRecordForId(modelName, this._getKey(snapshot))) {
         this._handleChildValue(store, typeClass, snapshot);
       }
     }));
+    */
   },
 
 
